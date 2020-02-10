@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  backend:
+    volumes:
+      - backend:/var/www/backend/
+
+  proxy:
+    volumes:
+      - backend:/var/www/backend/
+
+volumes:
+  backend:

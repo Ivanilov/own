@@ -1,0 +1,48 @@
+version: "3.7"
+
+services:
+  db:
+    image: mysql:8
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:? DB_NAME}
+      MYSQL_USER: ${DB_USER:? DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS:? DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:? DB_ROOT_PASS}
+    restart: always
+
+  backend:
+    build: backend
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: always
+
+  proxy:
+    image: nginx:stable-alpine
+    volumes:
+      - ./config/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static:/var/www/app/
+    ports:
+      - "${APP_PORT:? APP_PORT}:80"
+    depends_on:
+      - backend
+    restart: always
+
+  frontend:
+    build:
+      context: frontend
+      args:
+        - API_URL=${API_URL:? missing API_URL}
+    volumes:
+      - static:/var/www/app/
+    depends_on:
+      - proxy
+      - backend
+      - db
+
+volumes:
+  db:
+  static:

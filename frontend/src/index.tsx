@@ -1,4 +1,4 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(<div>index</div>, document.querySelector('#root'));
+ReactDOM.render(<div>Hi</div>, document.querySelector('#root'));
